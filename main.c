@@ -3,8 +3,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+
 #define TABLE_SIZE 1000
-#define LOAD_FACTOR 0.6
 #define MAX_WORD_LENGTH 1000
 
 unsigned long long hashTable[TABLE_SIZE]; // Hashing tablosu
@@ -47,6 +47,7 @@ void createHashTable() {
 
     fclose(dosya);
 }
+
 char* getRandomWord() {
     FILE* dosya = fopen("/Users/suleymanyag/development/c_projeler/hasing_projesi/kelimeler.text", "r");
     if (dosya == NULL) {
@@ -93,34 +94,41 @@ bool isAnagramInHashTable(const char* anagram) {
         if (hashTable[index] == key) {
             return true;
         } else if (hashTable[index] == 0) {
+            // İlgili index boş ise, anagramın tabloda olmadığı anlamına gelir
             return false;
         }
         i++;
     }
+    // Tabloda anagramı temsil eden bir değer bulunamadı
     return false;
 }
 
 int main() {
     createHashTable();
 
-    // Rasgele kelimeyi ekrana yazdırma
-    char* randomWord = getRandomWord();
-    if (randomWord != NULL) {
-        printf("Rasgele Kelime: %s\n", randomWord);
+    while (true) {
+        char* randomWord = getRandomWord();
+        if (randomWord != NULL) {
+            printf("Rasgele Kelime: %s\n", randomWord);
 
-        // Kullanıcıdan anagramı isteme
-        char anagram[100];
-        printf("Anagrami giriniz: ");
-        scanf("%s", anagram);
+            // Kullanıcıdan anagramı isteme
+            char anagram[100];
+            printf("Anagrami giriniz (Cikis icin '-' tusuna basiniz): ");
+            scanf("%s", anagram);
 
-        // Anagramın hash tablosunda olup olmadığını kontrol etme
-        if (isAnagramInHashTable(anagram)) {
-            printf("Anagram hash tablosunda bulunuyor.\n");
-        } else {
-            printf("Anagram hash tablosunda bulunmuyor.\n");
+            if (strcmp(anagram, "-") == 0) {
+                break;  // Çıkış yap
+            }
+
+            // Anagramın hash tablosunda olup olmadığını kontrol etme
+            if (isAnagramInHashTable(anagram)) {
+                printf(" ✅ Anagram hash tablosunda bulunuyor.\n");
+            } else {
+                printf(" ❌ %s hash tablosunda bulunmuyor.\n", anagram);
+            }
+
+            free(randomWord);
         }
-
-        free(randomWord);
     }
 
     return 0;
