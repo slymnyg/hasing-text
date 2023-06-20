@@ -72,7 +72,7 @@ void kelimeEkle(HashTablo *hash_table, const char *word)
     Node *new_node = create_node(word);
     hash_table->table[index] = new_node;
 }
-
+/* 
 bool anagramMi(const char* kelime1, const char* kelime2) {
     int histogram1[26] = {0};
     int histogram2[26] = {0};
@@ -105,42 +105,9 @@ bool anagramMi(const char* kelime1, const char* kelime2) {
     }
 
     return true;
-}
-Node* kelimeAra(HashTablo* hash_table, const char* word) {
-    unsigned int index = hashFonksiyonu(word);
-    unsigned int index2 = hashFonksiyonu2(word);
-    unsigned int i = 0;
+} */
 
-    while (hash_table->table[index] != NULL) {
-        if (strcasecmp(hash_table->table[index]->word, word) == 0) {
-            return hash_table->table[index];
-        } else if (anagramMi(hash_table->table[index]->word, word)) {
-            return hash_table->table[index];
-        }
-        index = (index + i * index2) % TABLE_SIZE;
-        i++;
-    }
 
-    return NULL;
-}
-
-void dosyadakiKelimeleriHasle(HashTablo *hash_table, const char *filename)
-{
-    FILE *file = fopen(filename, "r");
-    if (file == NULL)
-    {
-        printf("Failed to open file: %s\n", filename);
-        exit(1);
-    }
-
-    char word[MAX_WORD_LENGTH];
-    while (fscanf(file, "%s", word) != EOF)
-    {
-        kelimeEkle(hash_table, word);
-    }
-    fclose(file);
-}
-/* 
 int anagramMi(const char *word1, const char *word2)
 {
     if (strlen(word1) != strlen(word2))
@@ -167,7 +134,47 @@ int anagramMi(const char *word1, const char *word2)
 
     return 1;
 }
- */
+Node* kelimeAra(HashTablo* hash_table, const char* word, char* arananKelime) {
+    unsigned int index = hashFonksiyonu(word);
+    unsigned int index2 = hashFonksiyonu2(word);
+    unsigned int i = 0;
+
+    while (hash_table->table[index] != NULL) {
+        if (strcasecmp(hash_table->table[index]->word, word) == 0) {
+            return hash_table->table[index];
+        } else  {
+            printf("Anagram kontrolu yapiliyor...\n");
+           unsigned int anagramIndex = anagramMi(arananKelime, word);
+           if(anagramIndex == 1){
+             return hash_table->table[index];
+           }
+           return NULL;
+        }
+        index = (index + i * index2) % TABLE_SIZE;
+        i++;
+    }
+
+    return NULL;
+}
+
+void dosyadakiKelimeleriHasle(HashTablo *hash_table, const char *filename)
+{
+    FILE *file = fopen(filename, "r");
+    if (file == NULL)
+    {
+        printf("Failed to open file: %s\n", filename);
+        exit(1);
+    }
+
+    char word[MAX_WORD_LENGTH];
+    while (fscanf(file, "%s", word) != EOF)
+    {
+        kelimeEkle(hash_table, word);
+    }
+    fclose(file);
+}
+
+ 
 Node *randomKelimeGetir(HashTablo *hash_table)
 {
     Node *random_node = NULL;
@@ -192,10 +199,12 @@ int main()
     int yeniKelimeMi= 1;
 
     while (!cikisMi)
-    {
+    {     
+    
+            Node *random_node = randomKelimeGetir(hash_table);
         if (yeniKelimeMi)
         {
-            Node *random_node = randomKelimeGetir(hash_table);
+           
             if (random_node != NULL)
             {
                 strcpy(kelime, random_node->word);
@@ -219,7 +228,7 @@ int main()
             kelime[i] = toupper(kelime[i]);
         }
 
-        Node *result = kelimeAra(hash_table, kelime);
+        Node *result = kelimeAra(hash_table, kelime,random_node->word);
         if (result != NULL)
         {
             unsigned int index = hashFonksiyonu(kelime);
