@@ -188,12 +188,12 @@ int main()
     srand(time(NULL));
 
     char kelime[MAX_WORD_LENGTH];
-    int exit_requested = 0;
-    int new_random_word = 1;
+    int cikisMi = 0;
+    int yeniKelimeMi= 1;
 
-    while (!exit_requested)
+    while (!cikisMi)
     {
-        if (new_random_word)
+        if (yeniKelimeMi)
         {
             Node *random_node = randomKelimeGetir(hash_table);
             if (random_node != NULL)
@@ -201,7 +201,7 @@ int main()
                 strcpy(kelime, random_node->word);
                 printf("Rasgele Kelime : %s\n", kelime);
             }
-            new_random_word = 0;
+            yeniKelimeMi= 0;
         }
 
         printf("Anagrami girin (çıkmak için - ): ");
@@ -209,7 +209,7 @@ int main()
 
         if (strcmp(kelime, "-") == 0 || strcmp(kelime, "-") == 0)
         {
-            exit_requested = 1;
+            cikisMi = 1;
             continue;
         }
 
@@ -230,7 +230,7 @@ int main()
             printf("❌'%s' kelimesi hash tablosunda mevcut değil\n", kelime);
         }
 
-        new_random_word = 1;
+        yeniKelimeMi= 1;
     }
 
     return 0;
